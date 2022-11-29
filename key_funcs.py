@@ -67,13 +67,27 @@ def read_from_file(filename):
 #
 #
 ####################################################
-def write_to_file(filename, key):
+def write_to_file(filename, key, pickle):
+
+    # If pickle argument set
+    if pickle:
+        # pickle the object
+        key = pickle_object(key)
+
+        # Write in binary form
+        mode = "wb"
     
-    # Write in binary form
-    mode = "wb" 
+    # If pickle argument not set
+    else:
+        # Convert the list to a string
+        key = str(key)
+
+        # Write in text form
+        mode = "w"
+    
 
     with Open_file(filename, mode) as f:
-        key = pickle_object(key)
+        # Write to file
         result = f.write(key)
         
     return 0

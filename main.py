@@ -1,10 +1,10 @@
-from db_funcs import open_db, insert_key_into_db, select_key_from_db
+from db_funcs import open_db, insert_key_into_db, select_key_from_db, insert_public_key_into_db
 from auth import login, register, logout 
 from tasks import some_secure_function 
 import os
 from rsa import rsa_generate_key, rsa_encrypt, rsa_decrypt
-from key_classes import Keys
-from key_funcs import write_to_file, create_file 
+from key_classes import Keys, Public_key
+from key_funcs import write_to_file, create_file, read_from_file 
 from auth_funcs import get_current_logged_in_employee 
 from pickle_it import pickle_object, unpickle_string
 import random
@@ -37,14 +37,16 @@ if __name__=="__main__":
 
         print("""
 
-            1. Login
-            2. Logout
-            3. Register
-            4. Execute task
-            5. Generate keys
-            6. Encrypt message
-            7. Decrypt message
-            9. Exit
+            1.  Login
+            2.  Logout
+            3.  Register
+            4.  Execute task
+            5.  Generate keys
+            6.  Encrypt message
+            7.  Decrypt message
+            8.  import public key
+            9.  import private key
+            10. Exit
 
         Please enter your option:
 
@@ -90,10 +92,10 @@ if __name__=="__main__":
             insert_key_into_db(DB_NAME, keys)  
 
             # Export the public key
-            write_to_file("public_key.txt", public_key)
+            write_to_file("public_key.txt", public_key, True)
 
             # Export the private key
-            write_to_file("private_key.txt", private_key)
+            write_to_file("private_key.txt", private_key, True)
 
             user_input = input("Press any key to continue... ")
 
@@ -224,7 +226,40 @@ if __name__=="__main__":
             input("Press any key to continue...")
 
 
+        # Import public key
+        elif user_input == '8':
+            
+            public_key_filename = input("Please enter the public key name: ")            
+
+            firstname = input("Please enter the public key owner's firstname: ")
+            lastname = input("Please enter the public key owner's lastname: ")
+            email = input("Please enter the public key owner's email: ")
+
+            # Open file and read the key value            
+            public_key = read_from_file(public_key_filename)
+            print(f"Public key: {public_key}")
+
+            # Store key in DB 
+            public_key_object = Public_key(public_key=public_key, firstname=firstname, lastname=lastname, email=email)
+            print(f"public_key_object: {public_key_object.__str__()}")
+            #print(f"user_id: {foreign_public_key_object.user_id}")
+
+            # Get currently logged in user      
+            current_logged_in_employee = get_current_logged_in_employee()
+
+            # Insert into DB
+            insert_public_key_into_db(DB_NAME, public_key_object, current_logged_in_employee.id)
+
+            print("\n")
+            input("Press any key to continue...")
+
+
+        # Import private key 
         elif user_input == '9':
+            pass 
+
+
+        elif user_input == '10':
             print("Exiting...")
             exit()
 
