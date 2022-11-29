@@ -3,6 +3,9 @@ from auth import login, register, logout
 from tasks import some_secure_function 
 import os
 from rsa import rsa_generate_key
+from key_classes import Keys
+from key_funcs import write_to_file 
+from pickle_it import pickle_object
 
 NUMBER_OF_BITS = 8
 
@@ -54,7 +57,8 @@ if __name__=="__main__":
 
 
         elif user_input == '5': 
-            
+
+            # Generate the public and private keys            
             keys = rsa_generate_key(NUMBER_OF_BITS)
 
             print(f"Keys={keys}")
@@ -62,6 +66,15 @@ if __name__=="__main__":
             public_key = [keys[0], keys[2]]
             private_key = [keys[1], keys[2]]
 
+            # Create a 'keys' object and fill it with public and private key data 
+            #keys = Keys(PUBLIC_KEY=public_key, PRIVATE_KEY=private_key, user_id=current_logged_in_user())
+
+
+            # Store the keys in the DB
+
+
+            # Export the keys to files
+            write_to_file("public_key.txt", "wb", pickle_object(public_key))
 
             user_input = input("Press any key to continue... ")
 

@@ -4,7 +4,7 @@
 #
 #
 ####################################################
-class file_context_manager():
+class Open_file():
 
     # init method runs when object is created
     def __init__(self, filename, mode):

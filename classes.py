@@ -18,3 +18,4 @@ class DB_context_manager():
     def __exit__(self, exc_type, exc_cal, traceback):
         self.conn.commit()
         self.conn.close()
+  

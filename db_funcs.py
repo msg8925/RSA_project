@@ -1,15 +1,16 @@
 from classes import DB_context_manager
-
+#from key_classes import Keys
 
 ####################################################
 #
-#   Desc: Create table  
+#   Desc: Create tables  
 #
 #
 ####################################################
 def open_db(DB_NAME):
 
     with DB_context_manager(DB_NAME) as c:
+        
         c.execute("""
 
             CREATE TABLE IF NOT EXISTS employee (
@@ -32,6 +33,19 @@ def open_db(DB_NAME):
             );
             
         """)
+
+        c.execute("""
+
+            CREATE TABLE IF NOT EXISTS keys (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                PUBLIC_KEY TEXT,
+                PRIVATE_KEY TEXT,
+                EMPLOYEE_ID INTEGER,
+                FOREIGN KEY (EMPLOYEE_ID) REFERENCES employee (id) 
+            );
+            
+        """)
+
 
     return 0
 
@@ -106,3 +120,17 @@ def delete_session_from_db(DB_NAME, employee_id):
         c.execute("DELETE FROM session WHERE EMPLOYEE_ID=:employee_id", {'id': None, 'employee_id': employee_id})
 
     return 0   
+
+
+####################################################
+#
+#   Desc: Add public and private keys to 'keys' 
+#         table in DB
+#
+####################################################
+def insert_key_into_db(DB_NAME, keys):
+
+    with DB_context_manager(DB_NAME) as c:
+        c.execute("INSERT INTO keys (id, PUBLIC_KEY, PRIVATE_KEY, USER_ID) VALUES (:id, :public_key, :private_key, :user_id)", {'id': None, 'public_key': keys.PUBLIC_KEY, 'private_key':  keys.PRIVATE_KEY, 'user_id': keys.user_id}) 
+
+    return 0

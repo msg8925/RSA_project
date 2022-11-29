@@ -1,5 +1,5 @@
-from file_context_manager import file_context_manager
-from pickleEmployee import pickle_object, unpickle_string
+from file_context_manager import Open_file
+from pickle_it import pickle_object, unpickle_string
 
 
 ####################################################
@@ -12,7 +12,7 @@ from pickleEmployee import pickle_object, unpickle_string
 def set_current_logged_in_employee(employee):
 
     # Open the "auth_vars.pkl" file with a context manager 
-    with file_context_manager("auth_vars.pkl", "wb") as f:
+    with Open_file("auth_vars.pkl", "wb") as f:
         
         # Pickle the 'employee' object
         employee = pickle_object(employee)
@@ -34,7 +34,7 @@ def set_current_logged_in_employee(employee):
 def get_current_logged_in_employee():
 
     # Open the "auth_vars.pkl" file with a context manager
-    with file_context_manager("auth_vars.pkl", "rb") as f:
+    with Open_file("auth_vars.pkl", "rb") as f:
         
         # Read the file and retrieve the pickled string
         employee = f.read()
