@@ -7,12 +7,15 @@ from key_classes import Keys
 from key_funcs import write_to_file, create_file 
 from auth_funcs import get_current_logged_in_employee 
 from pickle_it import pickle_object, unpickle_string
+import random
+import re
 
 NUMBER_OF_BITS = 8
 
 string_encrypted_message = []
 ampersand_embedded_message = []
 original_msg = []
+separators = ["!", "@", "#", "^"] 
 
 if __name__=="__main__":
 
@@ -98,6 +101,8 @@ if __name__=="__main__":
         # Encrypt a message
         elif user_input == '6':
             
+            c = []
+
             # Get currently logged in user      
             current_logged_in_employee = get_current_logged_in_employee()
 
@@ -116,51 +121,46 @@ if __name__=="__main__":
             print(f"e = {e}")
             print(f"n = {n}")
 
-
-            ################################################################
-
-            c = []
-
+       
             # Convert char to ascii value
             #user_char = input("Please enter a char: ")
             user_string = input("Please enter the string you want to encrypt: ")
             user_string.split() 
             #print(f"user_string = {user_string}")
 
+            # Encryption process 
             for msg in user_string: 
+                # Convert each ASCII character into its equivalent number 
                 msg = ord(msg)
-                #print(f"msg = {msg}")
                 
+                # Append each value in encrypted form into an empty list called 'c' 
                 c.append(rsa_encrypt(msg, e, n))
 
 
+            # Convert each value into a string type 
             index = 0
             for msg_element in c:
                 string_encrypted_message.append(str(c[index])) 
                 index = index + 1
 
-            #print(f"string_encrypted_message = {string_encrypted_message}") 
-
-            # Insert symbol '&' to allow dectection of word boundaries    
             
+            # Insert symbol '&' to allow dectection of word boundaries     
             for msg_item in string_encrypted_message:
-                ampersand_embedded_message.append(msg_item + '&')
+
+                random_value = random.randint(0, (len(separators) - 1))
+                ampersand_embedded_message.append(msg_item + separators[random_value])
     
-
-            #print(f"ampersand embedded message = {ampersand_embedded_message}")
-
-            #  # Join the string version
+   
+            # Make the encryted list into a single continuous string   
             ampersand_embedded_message = "".join(ampersand_embedded_message)
-            # joined_encrypted_message = "".join(string_encrypted_message)
-
+            
+            # Print the encrypted message for the user to see
             print(f"""Encrypted message: 
             
                 {ampersand_embedded_message}
                         
             """)
-        
-          
-            ################################################################
+
 
             print("\n")
             user_input = input("Press any key to continue... ")
@@ -169,6 +169,8 @@ if __name__=="__main__":
         # Decrypt a message
         elif user_input == '7':
             
+            c = []    
+
             # Get currently logged in user      
             current_logged_in_employee = get_current_logged_in_employee()
 
@@ -188,33 +190,38 @@ if __name__=="__main__":
 
             print(f"d = {d}")
             print(f"n = {n}")
-
-
-            #################################################################
-             
-            c = []
+            
 
             c = input("Please enter the message you want to decrypt: ")
 
             # Separate the message into a list 
-            c = c.split('&')
+            # n = 0
+            # for index in c:
+            #     c = c.split(separators[n])
+            #     n = n + 1
+
+            c = re.split('\!|@|#|\^', c)
+            # c = c.split('@')
+            # c = c.split('#')
+            # c = c.split('$')
+
+            print(f"c = {c}")
 
             # Remove the final empty index     
             c.pop()
-
-            #print(f"c.split('&') = {c}")  
-
-            # d = private_key[0]
-        
+            c.pop()
+            
+            # Decryption process        
             for original_char in c:
+                # Decrypt the message and place it in a list called 'original message'
                 original_msg.append(chr(rsa_decrypt(int(original_char), d, n)))
 
 
-            original_text = "".join(original_msg)    
-            print(f"original message = {original_text}")   
+            # Join the list into a sinle string
+            original_text = "".join(original_msg)
 
-             
-            #################################################################     
+            # Print the unencrypted message    
+            print(f"original message = {original_text}")   
 
 
             print("\n")
