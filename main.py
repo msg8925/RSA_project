@@ -15,7 +15,7 @@ NUMBER_OF_BITS = 8
 string_encrypted_message = []
 ampersand_embedded_message = []
 original_msg = []
-separators = ["!", "@", "#", "^"] 
+separators = ["!", "@", "#", "$", "%", "^", "&", "*"] 
 
 if __name__=="__main__":
 
@@ -36,6 +36,8 @@ if __name__=="__main__":
         os.system("cls")
 
         print("""
+
+        Welcome to Mike's RSA encryption tool
 
             1.  Login
             2.  Logout
@@ -78,7 +80,7 @@ if __name__=="__main__":
             # Generate the public and private keys            
             keys = rsa_generate_key(NUMBER_OF_BITS)
 
-            print(f"Keys={keys}")
+            #print(f"Keys={keys}")
 
             public_key = [keys[0], keys[2]]
             private_key = [keys[1], keys[2]]
@@ -98,6 +100,8 @@ if __name__=="__main__":
             # Export the private key
             write_to_file("private_key.txt", private_key, True)
 
+            print("Keys have been generated. Please check your current directory.")
+
             user_input = input("Press any key to continue... ")
 
 
@@ -109,67 +113,87 @@ if __name__=="__main__":
 
             # Get currently logged in user      
             current_logged_in_employee = get_current_logged_in_employee()
-
-            # Check that the logged in user has a private key in the DB
-            if not select_key_from_db(DB_NAME, current_logged_in_employee.id):
-                print("You do not have any private key in the DB. Please create one.")
-                exit() 
-            
-
+                               
             # Retrieve key from DB
+            #keys = select_all_public_keys_from_db(DB_NAME, current_logged_in_employee.id)
             keys = select_key_from_db(DB_NAME, current_logged_in_employee.id)
 
-            print(f"key: {keys}")
-            #print(f"public key: {}")
+            # Check that the logged in user has a private key in the DB
+            if keys:
 
-            public_key = unpickle_string(keys[1])
-            print(f"Public key: {public_key}")
-
-            e = public_key[0]
-            n = public_key[1]
-
-            print(f"e = {e}")
-            print(f"n = {n}")
-
-       
-            # Convert char to ascii value
-            #user_char = input("Please enter a char: ")
-            user_string = input("Please enter the string you want to encrypt: ")
-            user_string.split() 
-            #print(f"user_string = {user_string}")
-
-            # Encryption process 
-            for msg in user_string: 
-                # Convert each ASCII character into its equivalent number 
-                msg = ord(msg)
+                # Print all public keys so the user can select a key to encrypt with
+                # print(f"""
                 
-                # Append each value in encrypted form into an empty list called 'c' 
-                c.append(rsa_encrypt(msg, e, n))
+                #     Please select the key you want to encrypt with:
+
+                #     {keys}
+                
+                # """)
+
+                #user_input = int(input(">>: "))
+                
+                
+                # print(f"key: {keys[user_input]} selected.")
+                # print(f"key: {keys[0][1]} selected.")
+                #print(f"public key: {}")
+
+                public_key = unpickle_string(keys[1])
+
+                # print(f"key[][]: {keys[user_input][1]}")
+
+                
+                #print(f"Public key: {public_key}")
+
+                e = public_key[0]
+                n = public_key[1]
+
+                #print(f"e = {e}")
+                #print(f"n = {n}")
+
+        
+                # Convert char to ascii value
+                #user_char = input("Please enter a char: ")
+                user_string = input("Please enter the string you want to encrypt: ")
+                user_string.split() 
+                #print(f"user_string = {user_string}")
+
+                # Encryption process 
+                for msg in user_string: 
+                    # Convert each ASCII character into its equivalent number 
+                    msg = ord(msg)
+                    
+                    # Append each value in encrypted form into an empty list called 'c' 
+                    c.append(rsa_encrypt(msg, e, n))
 
 
-            # Convert each value into a string type 
-            index = 0
-            for msg_element in c:
-                string_encrypted_message.append(str(c[index])) 
-                index = index + 1
+                # Convert each value into a string type 
+                index = 0
+                for msg_element in c:
+                    string_encrypted_message.append(str(c[index])) 
+                    index = index + 1
 
-            
-            # Insert symbol '&' to allow dectection of word boundaries     
-            for msg_item in string_encrypted_message:
+                
+                # Insert symbol '&' to allow dectection of word boundaries     
+                for msg_item in string_encrypted_message:
 
-                random_value = random.randint(0, (len(separators) - 1))
-                ampersand_embedded_message.append(msg_item + separators[random_value])
+                    random_value = random.randint(0, (len(separators) - 1))
+                    ampersand_embedded_message.append(msg_item + separators[random_value])
+        
     
-   
-            # Make the encryted list into a single continuous string   
-            ampersand_embedded_message = "".join(ampersand_embedded_message)
-            
-            # Print the encrypted message for the user to see
-            print(f"""Encrypted message: 
-            
-                {ampersand_embedded_message}
-                        
-            """)
+                # Make the encryted list into a single continuous string   
+                ampersand_embedded_message = "".join(ampersand_embedded_message)
+                
+                # Print the encrypted message for the user to see
+                print(f"""Encrypted message: 
+                
+                    {ampersand_embedded_message}
+                            
+                """)
+
+
+            # If user does not have a private key in the DB
+            else:
+                print("You do not have any private key in the DB. Please create one.")
 
 
             print("\n")
@@ -187,47 +211,53 @@ if __name__=="__main__":
             # Retrieve key from DB
             keys = select_key_from_db(DB_NAME, current_logged_in_employee.id)
 
-            print(f"key: {keys}")
-            #print(f"public key: {}")
+            if keys:
+                #print(f"key: {keys}")
+                #print(f"public key: {}")
 
-            # Unpickle the private key
-            private_key = unpickle_string(keys[2])
-            print(f"Private key: {private_key}")
+                # Unpickle the private key
+                private_key = unpickle_string(keys[2])
+                #print(f"Private key: {private_key}")
 
-            # Extract the 'd' and 'n' values from the private key
-            d = private_key[0]
-            n = private_key[1]
+                # Extract the 'd' and 'n' values from the private key
+                d = private_key[0]
+                n = private_key[1]
 
-            print(f"d = {d}")
-            print(f"n = {n}")
-            
-
-            c = input("Please enter the message you want to decrypt: ")
-
-            # Split the string on characters
-            c = re.split('\!|@|#|\^', c)
-
-            #print(f"c = {c}")
-
-            # Remove the final empty index     
-            c.pop()
-            c.pop()
-            
-            # Decryption process        
-            for original_char in c:
-                # Decrypt the message and place it in a list called 'original message'
-                original_msg.append(chr(rsa_decrypt(int(original_char), d, n)))
-
-
-            # Join the list into a sinle string
-            original_text = "".join(original_msg)
-
-            # Print the unencrypted message    
-            print(f"""
-            
-                original message = {original_text}
+                #print(f"d = {d}")
+                #print(f"n = {n}")
                 
-            """)   
+
+                c = input("Please enter the message you want to decrypt: ")
+
+                # Split the string on characters
+                c = re.split('\!|@|#|\$|%|\^|&|\*', c)
+
+                #print(f"c = {c}")
+
+                # Remove the final empty index     
+                c.pop()
+                #c.pop()
+                
+                # Decryption process        
+                for original_char in c:
+                    # Decrypt the message and place it in a list called 'original message'
+                    original_msg.append(chr(rsa_decrypt(int(original_char), d, n)))
+
+
+                # Join the list into a sinle string
+                original_text = "".join(original_msg)
+
+                # Print the unencrypted message    
+                print(f"""
+                
+                    original message = {original_text}
+                    
+                """)   
+
+
+            #
+            else:
+                print("You do not have any private key in the DB. Please create one.")
 
 
             print("\n")
