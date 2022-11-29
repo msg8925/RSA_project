@@ -134,3 +134,19 @@ def insert_key_into_db(DB_NAME, keys):
         c.execute("INSERT INTO keys (id, PUBLIC_KEY, PRIVATE_KEY, EMPLOYEE_ID) VALUES (:id, :public_key, :private_key, :employee_id)", {'id': None, 'public_key': keys.public_key, 'private_key':  keys.private_key, 'employee_id': keys.employee_id}) 
 
     return 0
+
+
+####################################################
+#
+#   Desc: Select a key from the 'key' table in the DB 
+#         
+#
+####################################################
+def select_key_from_db(DB_NAME, employee_id):
+
+    with DB_context_manager(DB_NAME) as c:
+        c.execute("SELECT * FROM keys WHERE EMPLOYEE_ID=:employee_id", {'id': None, 'employee_id': employee_id}) 
+        key = c.fetchone() 
+
+    return key
+
