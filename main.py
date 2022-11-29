@@ -1,11 +1,12 @@
-from db_funcs import open_db
+from db_funcs import open_db, insert_key_into_db
 from auth import login, register, logout 
 from tasks import some_secure_function 
 import os
 from rsa import rsa_generate_key
 from key_classes import Keys
 from key_funcs import write_to_file 
-from pickle_it import pickle_object
+from auth_funcs import get_current_logged_in_employee
+
 
 NUMBER_OF_BITS = 8
 
@@ -56,6 +57,7 @@ if __name__=="__main__":
             user_input = input("Press any key to continue... ")
 
 
+        # Generate keys
         elif user_input == '5': 
 
             # Generate the public and private keys            
@@ -66,15 +68,20 @@ if __name__=="__main__":
             public_key = [keys[0], keys[2]]
             private_key = [keys[1], keys[2]]
 
-            # Create a 'keys' object and fill it with public and private key data 
-            #keys = Keys(PUBLIC_KEY=public_key, PRIVATE_KEY=private_key, user_id=current_logged_in_user())
+            # Get currently logged in employee to extract id 
+            current_logged_in_employee = get_current_logged_in_employee()
 
+            # Create a 'keys' object and fill it with public and private key data 
+            keys = Keys(public_key=str(public_key), private_key=str(private_key), employee_id=current_logged_in_employee.id)
 
             # Store the keys in the DB
+            insert_key_into_db(DB_NAME, keys)  
 
+            # Export the public key
+            write_to_file("public_key.txt", public_key)
 
-            # Export the keys to files
-            write_to_file("public_key.txt", "wb", pickle_object(public_key))
+            # Export the private key
+            write_to_file("private_key.txt", private_key)
 
             user_input = input("Press any key to continue... ")
 

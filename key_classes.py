@@ -1,13 +1,13 @@
 class Keys:
 
-    def __init__(self, PUBLIC_KEY, PRIVATE_KEY, user_id):
-        self.PUBLIC_KEY = PUBLIC_KEY
-        self.PRIVATE_KEY = PRIVATE_KEY
-        self.user_id = user_id
+    def __init__(self, public_key, private_key, employee_id):
+        self.public_key = public_key
+        self.private_key = private_key
+        self.employee_id = employee_id
 
 
     def __repr__(self):
-        return f"keys('Public_key: '{self.PUBLIC_KEY}, 'Private_key: {self.PRIVATE_KEY}', 'User id: '{self.user_id})" 
+        return f"keys('Public_key: '{self.public_key}, 'Private_key: {self.private_key}', 'employee id: '{self.employee_id})" 
 
     def __str__(self):
-        return f"keys('Public_key: '{self.PUBLIC_KEY}, 'Private_key: {self.PRIVATE_KEY}', 'User id: '{self.user_id})" 
+        return f"keys('Public_key: '{self.public_key}, 'Private_key: {self.private_key}', 'employee id: '{self.employee_id})" 
