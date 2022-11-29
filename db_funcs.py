@@ -176,3 +176,18 @@ def insert_public_key_into_db(DB_NAME, public_key_owner, logged_in_employee_id):
         c.execute("INSERT INTO public_keys (id, PUBLIC_KEY, FIRSTNAME, LASTNAME, EMAIL, EMPLOYEE_ID) VALUES (:id, :public_key, :firstname, :lastname, :email, :employee_id)", {'id': None, 'public_key': str(public_key_owner.public_key), 'firstname': public_key_owner.firstname, 'lastname': public_key_owner.lastname, 'email': public_key_owner.email, 'employee_id': logged_in_employee_id})
         
     return 0
+
+
+####################################################
+#
+#   Desc: select all foreign keys from DB
+#
+#
+####################################################
+def select_all_public_keys_from_db(DB_NAME, employee_id):
+    
+    with DB_context_manager(DB_NAME) as c:
+        c.execute("SELECT * FROM public_keys WHERE EMPLOYEE_ID=:employee_id", {'employee_id': employee_id})
+        public_keys = c.fetchall()
+
+    return public_keys    

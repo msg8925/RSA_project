@@ -1,4 +1,4 @@
-from db_funcs import open_db, insert_key_into_db, select_key_from_db, insert_public_key_into_db
+from db_funcs import open_db, insert_key_into_db, select_key_from_db, insert_public_key_into_db, select_all_public_keys_from_db
 from auth import login, register, logout 
 from tasks import some_secure_function 
 import os
@@ -46,7 +46,8 @@ if __name__=="__main__":
             7.  Decrypt message
             8.  import public key
             9.  import private key
-            10. Exit
+            10. Show all foreign public keys
+            11. Exit
 
         Please enter your option:
 
@@ -103,10 +104,17 @@ if __name__=="__main__":
         # Encrypt a message
         elif user_input == '6':
             
+            # List to hold encrypted messages    
             c = []
 
             # Get currently logged in user      
             current_logged_in_employee = get_current_logged_in_employee()
+
+            # Check that the logged in user has a private key in the DB
+            if not select_key_from_db(DB_NAME, current_logged_in_employee.id):
+                print("You do not have any private key in the DB. Please create one.")
+                exit() 
+            
 
             # Retrieve key from DB
             keys = select_key_from_db(DB_NAME, current_logged_in_employee.id)
@@ -260,6 +268,18 @@ if __name__=="__main__":
 
 
         elif user_input == '10':
+
+            # Get currently logged in user      
+            current_logged_in_employee = get_current_logged_in_employee()
+
+            # Get all foreign keys associated with current logged in user
+            print(f"{select_all_public_keys_from_db(DB_NAME, current_logged_in_employee.id)}")    
+
+            print("\n")
+            input("Press any key to continue...")
+
+
+        elif user_input == '11':
             print("Exiting...")
             exit()
 
