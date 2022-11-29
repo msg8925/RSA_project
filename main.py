@@ -194,18 +194,10 @@ if __name__=="__main__":
 
             c = input("Please enter the message you want to decrypt: ")
 
-            # Separate the message into a list 
-            # n = 0
-            # for index in c:
-            #     c = c.split(separators[n])
-            #     n = n + 1
-
+            # Split the string on characters
             c = re.split('\!|@|#|\^', c)
-            # c = c.split('@')
-            # c = c.split('#')
-            # c = c.split('$')
 
-            print(f"c = {c}")
+            #print(f"c = {c}")
 
             # Remove the final empty index     
             c.pop()
@@ -221,7 +213,11 @@ if __name__=="__main__":
             original_text = "".join(original_msg)
 
             # Print the unencrypted message    
-            print(f"original message = {original_text}")   
+            print(f"""
+            
+                original message = {original_text}
+                
+            """)   
 
 
             print("\n")
